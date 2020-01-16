@@ -72,7 +72,7 @@ return function (App $app) {
                                 foreach ($data['records'] as &$item) {
                                     $item["incorrectAnswers"] = json_decode($item["incorrectAnswers"], true);
 
-                                    $item["categoryName"] = $item["category"]["name"];
+                                   // $item["categoryName"] = $item["category"]["name"];
                                 }
                             }
                         }
