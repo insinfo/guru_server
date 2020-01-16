@@ -83,7 +83,7 @@ return function (App $app) {
 
 
                     $response = $response->withBody($body);
-                    $response = $response->withHeader("Content-Type","application/json; charset=utf-8");
+                    //$response = $response->withHeader("Content-Type","application/json; charset=utf-8");
 
                     //Content-Type: text/html; charset=utf-8.
                 }
@@ -92,6 +92,7 @@ return function (App $app) {
         ]);
         $api = new Api($config);
         $response = $api->handle($request);
+        $response = $response->withAddedHeader("Content-Type","application/json; charset=utf-8");
         return $response;
     });
 };
