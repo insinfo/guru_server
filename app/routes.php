@@ -37,6 +37,7 @@ return function (App $app) {
 
     $app->get('/', function (Request $request, Response $response) {
         $response->getBody()->write('Hello world!');
+
         return $response;
     });
 
@@ -57,7 +58,7 @@ return function (App $app) {
             "driver" => "mysql",
             "port" => "3306",
             "address" => "localhost",
-            'middlewares' => 'customization',//Response
+            'middlewares' => 'customization',//Response ResponseInterface
             'customization.afterHandler' => function ($operation, $tableName, ResponseInterface $response, $environment) {
 
                 if ($tableName == 'questions' && $operation == 'list') {
@@ -66,33 +67,31 @@ return function (App $app) {
                     $contents = $body->getContents();
                     $data = json_decode($contents, true);
 
+
                     if (is_array($data)) {
                         if (array_key_exists('records', $data)) {
                             if (is_array($data['records'])) {
                                 foreach ($data['records'] as &$item) {
                                     $item["incorrectAnswers"] = json_decode($item["incorrectAnswers"], true);
 
-                                   // $item["categoryName"] = $item["category"]["name"];
+                                    $item["categoryName"] = $item["category"]["name"];
                                 }
                             }
                         }
                     }
 
-                    $body = \Nyholm\Psr7\Stream::create();
-                    $body->write(json_encode($data));
+                    $newResponse = new Response();
+                    $newBody = $newResponse->getBody();
+                    $newBody->write(json_encode($data));
+                    return $newResponse->withHeader("Content-Type","application/json; charset=utf-8");
 
-
-                    $response = $response->withBody($body);
-                    //$response = $response->withHeader("Content-Type","application/json; charset=utf-8");
-
-                    //Content-Type: text/html; charset=utf-8.
                 }
                 return $response;
             },
         ]);
         $api = new Api($config);
         $response = $api->handle($request);
-        $response = $response->withAddedHeader("Content-Type","application/json; charset=utf-8");
+        //  $response = $response->withAddedHeader("Content-Type","application/json; charset=utf-8");
         return $response;
     });
 };
