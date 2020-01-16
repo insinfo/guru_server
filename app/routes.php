@@ -33,6 +33,13 @@ use Tqdev\PhpCrudApi\Config;
 use Psr\Http\Message\ResponseInterface;
 
 return function (App $app) {
+
+
+    $app->get('/', function (Request $request, Response $response) {
+        $response->getBody()->write('Hello world!');
+        return $response;
+    });
+
     $container = $app->getContainer();
 
     // Add this handler for PHP-CRUD-API:
